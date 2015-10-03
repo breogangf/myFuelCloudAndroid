@@ -7,6 +7,7 @@ package com.fivelabs.myfuelcloud.model;
 public class User {
 
     private String username;
+    private String email;
     private String password;
     private Integer createdAt;
     private Boolean blocked;
@@ -18,6 +19,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -61,6 +70,7 @@ public class User {
 
         if (username != null ? !username.equals(user.username) : user.username != null)
             return false;
+        if (email != null ? !email.equals(user.email) : user.email != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null)
             return false;
         if (createdAt != null ? !createdAt.equals(user.createdAt) : user.createdAt != null)
@@ -73,6 +83,7 @@ public class User {
     @Override
     public int hashCode() {
         int result = username != null ? username.hashCode() : 0;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (blocked != null ? blocked.hashCode() : 0);
@@ -84,6 +95,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", createdAt=" + createdAt +
                 ", blocked=" + blocked +
