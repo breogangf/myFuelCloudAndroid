@@ -12,6 +12,9 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_up">Sign up</string>
+    <string name="action_sign_up_short">Sign up</string>
+    <string name="error_invalid_username">This username is invalid</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -20,4 +23,11 @@
         completions."
     </string>
     <string name="register">Register</string>
+    <string name="title_activity_register">Sign up</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="login">login</string>
+    <string name="error_getting_user">Error getting user</string>
+    <string name="register_successful">User register successful</string>
 </resources>

@@ -21,6 +21,9 @@ import com.fivelabs.myfuelcloud.util.Session;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    TextView textViewUserName;
+    TextView getTextViewEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +49,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        TextView textViewUserName = (TextView) findViewById(R.id.textViewUsername);
+        textViewUserName = (TextView) findViewById(R.id.textViewUsername);
+        getTextViewEmail = (TextView) findViewById(R.id.textViewEmail);
+
         textViewUserName.setText(Common.capitalizeWord(Session.getsUser().getUsername()));
+        getTextViewEmail.setText(Common.capitalizeWord(Session.getsUser().getEmail()));
 
     }
 
