@@ -12,6 +12,7 @@ public class User {
     private Integer createdAt;
     private Boolean blocked;
     private String Id;
+    private String token;
 
     public String getUsername() {
         return username;
@@ -61,6 +62,14 @@ public class User {
         Id = id;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,7 +85,8 @@ public class User {
         if (createdAt != null ? !createdAt.equals(user.createdAt) : user.createdAt != null)
             return false;
         if (blocked != null ? !blocked.equals(user.blocked) : user.blocked != null) return false;
-        return !(Id != null ? !Id.equals(user.Id) : user.Id != null);
+        if (Id != null ? !Id.equals(user.Id) : user.Id != null) return false;
+        return !(token != null ? !token.equals(user.token) : user.token != null);
 
     }
 
@@ -88,6 +98,7 @@ public class User {
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (blocked != null ? blocked.hashCode() : 0);
         result = 31 * result + (Id != null ? Id.hashCode() : 0);
+        result = 31 * result + (token != null ? token.hashCode() : 0);
         return result;
     }
 
@@ -100,6 +111,7 @@ public class User {
                 ", createdAt=" + createdAt +
                 ", blocked=" + blocked +
                 ", Id='" + Id + '\'' +
+                ", token='" + token + '\'' +
                 '}';
     }
 }

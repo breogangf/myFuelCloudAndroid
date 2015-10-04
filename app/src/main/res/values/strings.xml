@@ -29,4 +29,5 @@
     <string name="prompt_email">Email</string>
     <string name="login">login</string>
     <string name="error_getting_user">Error getting user</string>
+    <string name="register_successful">User register successful</string>
 </resources>

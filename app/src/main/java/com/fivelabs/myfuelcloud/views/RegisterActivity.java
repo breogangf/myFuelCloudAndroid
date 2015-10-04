@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
+import com.fivelabs.myfuelcloud.api.email;
 import com.fivelabs.myfuelcloud.api.register;
 import com.fivelabs.myfuelcloud.api.user;
 import com.fivelabs.myfuelcloud.model.User;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -65,6 +67,10 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     private View mRegisterFormView;
 
     Button mSignUpButton;
+
+    String username;
+    String email;
+    String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,10 +175,9 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         mPasswordView.setError(null);
 
         // Store values at the time of the register attempt.
-        String username = mUsernameView.getText().toString();
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
+        username = mUsernameView.getText().toString();
+        email = mEmailView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -281,7 +286,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             @Override
             public void success(User user, Response response) {
                 getUser(mUsernameView.getText().toString());
-                Toast.makeText(RegisterActivity.this, "User register successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, R.string.register_successful, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -312,6 +317,12 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             public void success(User user, Response response) {
                 showProgress(false);
                 Session.setsUser(user);
+                sendEmail(user.getUsername(), "Welcome to MyFuelCloud", "dev5labs@gmail.com", user.getEmail());
+
+                Intent i = getIntent();
+                i.putExtra("USERNAME", username);
+                i.putExtra("PASSWORD", password);
+                setResult(RESULT_OK, i);
                 finish();
             }
 
@@ -322,7 +333,39 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 Toast.makeText(getApplicationContext(), R.string.error_getting_user, Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
+    public void sendEmail(final String name, final String subject, final String from, final String to){
+
+        RestAdapter restAdapter = (new RestAdapter.Builder())
+                .setEndpoint(Global.API)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", Common.generateToken(username, password));
+                    }
+                })
+                .setLog(new RestAdapter.Log() {
+                    @Override
+                    public void log(String msg) {
+                        Log.i("RETROFIT", msg);
+                    }
+                }).build();
+
+        email email = restAdapter.create(email.class);
+        email.sendEmail(name, subject, from, to, new Callback<User>() {
+
+            @Override
+            public void success(User user, Response response) {
+                Log.d("REST_CLIENT", "Welcome email sent successfully");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("REST_CLIENT", "Welcome email not sent, error: " + error);
+            }
+        });
     }
 
     @Override

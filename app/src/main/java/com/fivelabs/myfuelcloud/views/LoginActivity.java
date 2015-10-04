@@ -47,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mTextViewRegister;
     private Button mSignInButton;
 
+    private final static int REGISTER_CODE = 55;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,12 +94,33 @@ public class LoginActivity extends AppCompatActivity {
         mTextViewRegister.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+
+                startActivityForResult(new Intent(LoginActivity.this, RegisterActivity.class), REGISTER_CODE);
+
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_CANCELED) {
+            //TODO handle canceled register
+        } else {
+            String username = data.getExtras().getString("USERNAME");
+            String password = data.getExtras().getString("PASSWORD");
+
+            switch (requestCode) {
+                case REGISTER_CODE:
+
+                    mUsernameView.setText(username);
+                    mPasswordView.setText(password);
+
+                    break;
+            }
+        }
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -217,6 +240,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(List<User> users, Response response) {
                 getUser(mUsernameView.getText().toString());
+                Session.getsUser().setToken(Common.generateToken(username, password));
             }
 
             @Override
