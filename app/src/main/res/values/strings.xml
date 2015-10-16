@@ -30,4 +30,7 @@
     <string name="login">login</string>
     <string name="error_getting_user">Error getting user</string>
     <string name="register_successful">User register successful</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

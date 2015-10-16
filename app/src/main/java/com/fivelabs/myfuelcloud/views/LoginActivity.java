@@ -47,6 +47,10 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mTextViewRegister;
     private Button mSignInButton;
 
+    private String username;
+    private String password;
+
+
     private final static int REGISTER_CODE = 55;
 
     @Override
@@ -62,8 +66,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -218,6 +220,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(final String username, final String password){
+
+        this.username = username;
+        this.password = password;
+
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
@@ -240,7 +246,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(List<User> users, Response response) {
                 getUser(mUsernameView.getText().toString());
-                Session.getsUser().setToken(Common.generateToken(username, password));
             }
 
             @Override
@@ -271,6 +276,7 @@ public class LoginActivity extends AppCompatActivity {
             public void success(User user, Response response) {
                 showProgress(false);
                 Session.setsUser(user);
+                Session.getsUser().setToken(Common.generateToken(username, password));
                 finish();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
