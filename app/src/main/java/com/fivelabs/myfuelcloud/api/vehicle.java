@@ -8,6 +8,7 @@ import retrofit.http.DELETE;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Path;
 
 /**
@@ -19,5 +20,10 @@ public interface vehicle {
     void addVehicle(@Field("brand") String brand, @Field("model") String model, @Field("year") Number year, @Field("created_at") Number created_at, @Field("created_by") String created_by, Callback<Vehicle> response);
 
     @DELETE("/vehicle/{id}")
-    void deleteVehicle(@Path("id") String itemId, Callback<Response> callback);
+    void deleteVehicle(@Path("id") String vehicleId, Callback<Response> callback);
+
+    @FormUrlEncoded
+    @PUT("/vehicle/{id}")
+    void updateVehicle(@Path("id") String vehicleId, @Field("brand") String brand, @Field("model") String model, @Field("year") Number year, @Field("created_at") Number created_at, @Field("created_by") String created_by, Callback<Vehicle> response);
+
 }

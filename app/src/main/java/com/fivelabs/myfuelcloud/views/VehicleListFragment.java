@@ -138,9 +138,9 @@ public class VehicleListFragment extends Fragment {
         final View dialogViewEdit = LayoutInflater.from(this.getActivity()).inflate(R.layout.modify_vehicle,null,true);
         builder.setView(dialogViewEdit);
 
-        EditText editTextBrand = (EditText) dialogViewEdit.findViewById(R.id.dialog_brand);
-        EditText editTextModel = (EditText) dialogViewEdit.findViewById(R.id.dialog_model);
-        EditText editTextYear = (EditText) dialogViewEdit.findViewById(R.id.dialog_year);
+        final EditText editTextBrand = (EditText) dialogViewEdit.findViewById(R.id.dialog_brand);
+        final EditText editTextModel = (EditText) dialogViewEdit.findViewById(R.id.dialog_model);
+        final EditText editTextYear = (EditText) dialogViewEdit.findViewById(R.id.dialog_year);
 
         String brand = Session.getsVehicles().get(position).getBrand();
         final String model = Session.getsVehicles().get(position).getModel();
@@ -155,47 +155,20 @@ public class VehicleListFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                String brand = editTextBrand.getText().toString();
+                String model = editTextModel.getText().toString();
+                int year = Integer.parseInt(editTextYear.getText().toString());
+
+                updateVehicle(id, brand, model, year);
             }
         });
 
         builder.setNeutralButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                RestAdapter restAdapter = (new RestAdapter.Builder())
-                        .setEndpoint(Global.API)
-                        .setLogLevel(RestAdapter.LogLevel.FULL)
-                        .setRequestInterceptor(new RequestInterceptor() {
-                            @Override
-                            public void intercept(RequestFacade request) {
-                                request.addHeader("Authorization", Session.getsUser().getToken());
-                            }
-                        })
-                        .setLog(new RestAdapter.Log() {
-                            @Override
-                            public void log(String msg) {
-                                Log.i("RETROFIT", msg);
-                            }
-                        }).build();
-
-                vehicle vehicle = restAdapter.create(vehicle.class);
-
-                vehicle.deleteVehicle(id, new Callback<Response>() {
-                    @Override
-                    public void success(Response response, Response response2) {
-                        loadVehicles();
-                        Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_deleted, Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        error.getCause();
-                        Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_deleted, Toast.LENGTH_LONG).show();
-                    }
-                });
+                deleteVehicle(id);
             }
         });
-
 
         builder.create();
         builder.show();
@@ -356,6 +329,77 @@ public class VehicleListFragment extends Fragment {
             public void failure(RetrofitError error) {
                 error.getCause();
                 Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_added, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void deleteVehicle(String id){
+        RestAdapter restAdapter = (new RestAdapter.Builder())
+                .setEndpoint(Global.API)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", Session.getsUser().getToken());
+                    }
+                })
+                .setLog(new RestAdapter.Log() {
+                    @Override
+                    public void log(String msg) {
+                        Log.i("RETROFIT", msg);
+                    }
+                }).build();
+
+        vehicle vehicle = restAdapter.create(vehicle.class);
+
+        vehicle.deleteVehicle(id, new Callback<Response>() {
+            @Override
+            public void success(Response response, Response response2) {
+                loadVehicles();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_deleted, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.getCause();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_deleted, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void updateVehicle(String id, String brand, String model, int year) {
+        int timestamp = Common.getCurrentTimestamp();
+
+        RestAdapter restAdapter = (new RestAdapter.Builder())
+                .setEndpoint(Global.API)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", Session.getsUser().getToken());
+                    }
+                })
+                .setLog(new RestAdapter.Log() {
+                    @Override
+                    public void log(String msg) {
+                        Log.i("RETROFIT", msg);
+                    }
+                }).build();
+
+        vehicle vehicle = restAdapter.create(vehicle.class);
+
+        vehicle.updateVehicle(id, brand, model, year, timestamp, Session.getsUser().getId(), new Callback<Vehicle>() {
+
+            @Override
+            public void success(Vehicle vehicle, Response response) {
+                loadVehicles();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_updated, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.getCause();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_updated, Toast.LENGTH_LONG).show();
             }
         });
     }
