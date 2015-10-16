@@ -132,7 +132,7 @@ public class VehicleListFragment extends Fragment {
 
     }
 
-    private void modifyVehicleDialog(String brand, String model, String year) {
+    private void modifyVehicleDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         final View dialogViewEdit = LayoutInflater.from(this.getActivity()).inflate(R.layout.modify_vehicle,null,true);
@@ -141,6 +141,11 @@ public class VehicleListFragment extends Fragment {
         EditText editTextBrand = (EditText) dialogViewEdit.findViewById(R.id.dialog_brand);
         EditText editTextModel = (EditText) dialogViewEdit.findViewById(R.id.dialog_model);
         EditText editTextYear = (EditText) dialogViewEdit.findViewById(R.id.dialog_year);
+
+        String brand = Session.getsVehicles().get(position).getBrand();
+        final String model = Session.getsVehicles().get(position).getModel();
+        final String year = String.valueOf(Session.getsVehicles().get(position).getYear());
+        final String id = Session.getsVehicles().get(position).get_id();
 
         editTextBrand.setText(brand);
         editTextModel.setText(model);
@@ -157,8 +162,37 @@ public class VehicleListFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                RestAdapter restAdapter = (new RestAdapter.Builder())
+                        .setEndpoint(Global.API)
+                        .setLogLevel(RestAdapter.LogLevel.FULL)
+                        .setRequestInterceptor(new RequestInterceptor() {
+                            @Override
+                            public void intercept(RequestFacade request) {
+                                request.addHeader("Authorization", Session.getsUser().getToken());
+                            }
+                        })
+                        .setLog(new RestAdapter.Log() {
+                            @Override
+                            public void log(String msg) {
+                                Log.i("RETROFIT", msg);
+                            }
+                        }).build();
 
+                vehicle vehicle = restAdapter.create(vehicle.class);
 
+                vehicle.deleteVehicle(id, new Callback<Response>() {
+                    @Override
+                    public void success(Response response, Response response2) {
+                        loadVehicles();
+                        Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_deleted, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        error.getCause();
+                        Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_deleted, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
 
@@ -214,11 +248,7 @@ public class VehicleListFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
-                String brand = Session.getsVehicles().get(position).getBrand();
-                String model = Session.getsVehicles().get(position).getModel();
-                String year = String.valueOf(Session.getsVehicles().get(position).getYear());
-
-                modifyVehicleDialog(brand, model, year);
+                modifyVehicleDialog(position);
 
             }
         }).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {

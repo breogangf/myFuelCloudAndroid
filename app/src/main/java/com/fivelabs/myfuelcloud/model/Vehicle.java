@@ -5,18 +5,28 @@ package com.fivelabs.myfuelcloud.model;
  */
 public class Vehicle {
 
+    String _id;
     String brand;
     String model;
     int year;
     String created_at;
     String userId;
 
-    public Vehicle(String brand, String model, int year, String created_at, String userId) {
+    public Vehicle(String _id, String brand, String model, int year, String created_at, String userId) {
+        this._id = _id;
         this.brand = brand;
         this.model = model;
         this.year = year;
         this.created_at = created_at;
         this.userId = userId;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getBrand() {
@@ -58,6 +68,4 @@ public class Vehicle {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
-
 }

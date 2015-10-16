@@ -44,4 +44,6 @@
     <string name="vehicle">Vehicle</string>
     <string name="save">SAVE</string>
     <string name="delete">DELETE</string>
+    <string name="vehicle_deleted">Vehicle deleted</string>
+    <string name="vehicle_not_deleted">Vehicle not deleted</string>
 </resources>
