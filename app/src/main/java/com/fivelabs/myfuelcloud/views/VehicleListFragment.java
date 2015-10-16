@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.fivelabs.myfuelcloud.R;
 import com.fivelabs.myfuelcloud.api.vehicle;
 import com.fivelabs.myfuelcloud.api.vehicles;
+import com.fivelabs.myfuelcloud.helpers.ItemClickSupport;
 import com.fivelabs.myfuelcloud.helpers.RVAdapter;
 import com.fivelabs.myfuelcloud.model.Vehicle;
 import com.fivelabs.myfuelcloud.util.Common;
@@ -61,6 +62,7 @@ public class VehicleListFragment extends Fragment {
     private View mProgressView;
 
     private View myInflatedView;
+    private RecyclerView rv;
 
     public VehicleListFragment() {
         // Required empty public constructor
@@ -128,7 +130,6 @@ public class VehicleListFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
     }
 
     private void addVehicleDialog() {
@@ -172,6 +173,22 @@ public class VehicleListFragment extends Fragment {
         mRecyclerView = myInflatedView.findViewById(R.id.rv);
         mProgressView = myInflatedView.findViewById(R.id.login_vehicles_progress);
 
+        rv = (RecyclerView) myInflatedView.findViewById(R.id.rv);
+
+        ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+            }
+        }).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+
+                return true;
+            }
+        });
+
+
         FloatingActionButton floatingActionButtonAdd = (FloatingActionButton) myInflatedView.findViewById(R.id.fab);
         floatingActionButtonAdd.setOnClickListener(new View.OnClickListener() {
 
@@ -214,7 +231,7 @@ public class VehicleListFragment extends Fragment {
             public void success(List<Vehicle> vehicles, Response response) {
                 Session.setsVehicles(vehicles);
 
-                RecyclerView rv = (RecyclerView) myInflatedView.findViewById(R.id.rv);
+
                 rv.setHasFixedSize(true);
 
                 LinearLayoutManager llm = new LinearLayoutManager(getActivity());
