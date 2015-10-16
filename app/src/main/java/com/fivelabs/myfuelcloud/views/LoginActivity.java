@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,12 +48,19 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mTextViewRegister;
     private Button mSignInButton;
 
+    private String username;
+    private String password;
+
+
     private final static int REGISTER_CODE = 55;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         // Set up the login form.
         mUsernameView = (EditText) findViewById(R.id.editTextUsername);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -62,8 +70,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -218,6 +224,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(final String username, final String password){
+
+        this.username = username;
+        this.password = password;
+
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
@@ -240,7 +250,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(List<User> users, Response response) {
                 getUser(mUsernameView.getText().toString());
-                Session.getsUser().setToken(Common.generateToken(username, password));
             }
 
             @Override
@@ -271,6 +280,7 @@ public class LoginActivity extends AppCompatActivity {
             public void success(User user, Response response) {
                 showProgress(false);
                 Session.setsUser(user);
+                Session.getsUser().setToken(Common.generateToken(username, password));
                 finish();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
