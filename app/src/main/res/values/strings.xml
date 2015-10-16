@@ -41,4 +41,7 @@
     <string name="add">Add</string>
     <string name="vehicle_added">Your vehicle was added</string>
     <string name="vehicle_not_added">Error adding your vehicle</string>
+    <string name="vehicle">Vehicle</string>
+    <string name="save">SAVE</string>
+    <string name="delete">DELETE</string>
 </resources>

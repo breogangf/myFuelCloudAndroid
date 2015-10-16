@@ -132,6 +132,41 @@ public class VehicleListFragment extends Fragment {
 
     }
 
+    private void modifyVehicleDialog(String brand, String model, String year) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        final View dialogViewEdit = LayoutInflater.from(this.getActivity()).inflate(R.layout.modify_vehicle,null,true);
+        builder.setView(dialogViewEdit);
+
+        EditText editTextBrand = (EditText) dialogViewEdit.findViewById(R.id.dialog_brand);
+        EditText editTextModel = (EditText) dialogViewEdit.findViewById(R.id.dialog_model);
+        EditText editTextYear = (EditText) dialogViewEdit.findViewById(R.id.dialog_year);
+
+        editTextBrand.setText(brand);
+        editTextModel.setText(model);
+        editTextYear.setText(year);
+
+        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.setNeutralButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+
+            }
+        });
+
+
+        builder.create();
+        builder.show();
+    }
+
     private void addVehicleDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -178,6 +213,12 @@ public class VehicleListFragment extends Fragment {
         ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                String brand = Session.getsVehicles().get(position).getBrand();
+                String model = Session.getsVehicles().get(position).getModel();
+                String year = String.valueOf(Session.getsVehicles().get(position).getYear());
+
+                modifyVehicleDialog(brand, model, year);
 
             }
         }).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
