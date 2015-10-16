@@ -1,9 +1,13 @@
 package com.fivelabs.myfuelcloud.views;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -18,13 +22,13 @@ import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
 import com.fivelabs.myfuelcloud.api.vehicle;
+import com.fivelabs.myfuelcloud.api.vehicles;
 import com.fivelabs.myfuelcloud.helpers.RVAdapter;
 import com.fivelabs.myfuelcloud.model.Vehicle;
 import com.fivelabs.myfuelcloud.util.Common;
 import com.fivelabs.myfuelcloud.util.Global;
 import com.fivelabs.myfuelcloud.util.Session;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -53,6 +57,11 @@ public class VehicleListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private View mRecyclerView;
+    private View mProgressView;
+
+    private View myInflatedView;
+
     public VehicleListFragment() {
         // Required empty public constructor
     }
@@ -75,6 +84,42 @@ public class VehicleListFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRecyclerView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +127,8 @@ public class VehicleListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     private void addVehicleDialog() {
@@ -120,7 +167,10 @@ public class VehicleListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View myInflatedView = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+        myInflatedView = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+
+        mRecyclerView = myInflatedView.findViewById(R.id.rv);
+        mProgressView = myInflatedView.findViewById(R.id.login_vehicles_progress);
 
         FloatingActionButton floatingActionButtonAdd = (FloatingActionButton) myInflatedView.findViewById(R.id.fab);
         floatingActionButtonAdd.setOnClickListener(new View.OnClickListener() {
@@ -131,25 +181,58 @@ public class VehicleListFragment extends Fragment {
             }
         });
 
-        RecyclerView rv = (RecyclerView) myInflatedView.findViewById(R.id.rv);
-        rv.setHasFixedSize(true);
-
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        rv.setLayoutManager(llm);
-
-        List<Vehicle> vehicles;
-
-
-        vehicles = new ArrayList<>();
-
-        //TODO add here actual vehicles for the user
-        vehicles.add(new Vehicle("Audi", "A3 SportBack", 2009, "1445011793", Session.getsUser().getId()));
-        vehicles.add(new Vehicle("Mazda", "CX-5", 2015, "1445011793", Session.getsUser().getId()));
-
-        RVAdapter adapter = new RVAdapter(vehicles);
-        rv.setAdapter(adapter);
+        loadVehicles();
 
         return myInflatedView;
+    }
+
+
+    private void loadVehicles(){
+
+        showProgress(true);
+
+        RestAdapter restAdapter = (new RestAdapter.Builder())
+                .setEndpoint(Global.API)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", Session.getsUser().getToken());
+                    }
+                })
+                .setLog(new RestAdapter.Log() {
+                    @Override
+                    public void log(String msg) {
+                        Log.i("RETROFIT", msg);
+                    }
+                }).build();
+
+        vehicles vehicles = restAdapter.create(vehicles.class);
+
+        vehicles.getVehicles(new Callback<List<Vehicle>>() {
+            @Override
+            public void success(List<Vehicle> vehicles, Response response) {
+                Session.setsVehicles(vehicles);
+
+                RecyclerView rv = (RecyclerView) myInflatedView.findViewById(R.id.rv);
+                rv.setHasFixedSize(true);
+
+                LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+                rv.setLayoutManager(llm);
+
+                RVAdapter adapter = new RVAdapter(Session.getsVehicles());
+                rv.setAdapter(adapter);
+
+                showProgress(false);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.getCause();
+                showProgress(false);
+
+            }
+        });
     }
 
     private void addVehicle(String brand, String model, int year) {
@@ -177,6 +260,7 @@ public class VehicleListFragment extends Fragment {
 
             @Override
             public void success(Vehicle vehicle, Response response) {
+                loadVehicles();
                 Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_added, Toast.LENGTH_LONG).show();
             }
 
