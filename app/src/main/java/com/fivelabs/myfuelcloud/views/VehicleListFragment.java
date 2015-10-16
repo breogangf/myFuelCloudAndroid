@@ -1,14 +1,22 @@
 package com.fivelabs.myfuelcloud.views;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.fivelabs.myfuelcloud.R;
+import com.fivelabs.myfuelcloud.helpers.RVAdapter;
+import com.fivelabs.myfuelcloud.model.Vehicle;
+import com.fivelabs.myfuelcloud.util.Session;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,8 +72,28 @@ public class VehicleListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+
+        View myInflatedView = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+        RecyclerView rv = (RecyclerView) myInflatedView.findViewById(R.id.rv);
+        rv.setHasFixedSize(true);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+
+        List<Vehicle> vehicles;
+
+
+        vehicles = new ArrayList<>();
+
+        //TODO add here actual vehicles for the user
+        vehicles.add(new Vehicle("Audi", "A3 SportBack", 2009, 1445011793, Session.getsUser().getId()));
+        vehicles.add(new Vehicle("Mazda", "CX-5", 2015, 1445011793, Session.getsUser().getId()));
+
+
+        RVAdapter adapter = new RVAdapter(vehicles);
+        rv.setAdapter(adapter);
+
+        return myInflatedView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
