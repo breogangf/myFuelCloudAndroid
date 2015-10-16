@@ -2,8 +2,12 @@ package com.fivelabs.myfuelcloud.views;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -73,7 +77,36 @@ public class VehicleListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View myInflatedView = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+        final View myInflatedView = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+
+        FloatingActionButton floatingActionButtonAdd = (FloatingActionButton) myInflatedView.findViewById(R.id.fab);
+        floatingActionButtonAdd.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.dialog_add_vehicle, null));
+                builder.setPositiveButton(getActivity().getString(R.string.add), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Snackbar.make(myInflatedView, "Your vehicle was added to your space", Snackbar.LENGTH_SHORT)
+                                .setAction(null, null).show();
+
+                    }
+                });
+                builder.setNegativeButton(getActivity().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+                builder.create();
+                builder.show();
+
+            }
+        });
+
         RecyclerView rv = (RecyclerView) myInflatedView.findViewById(R.id.rv);
         rv.setHasFixedSize(true);
 
@@ -88,7 +121,6 @@ public class VehicleListFragment extends Fragment {
         //TODO add here actual vehicles for the user
         vehicles.add(new Vehicle("Audi", "A3 SportBack", 2009, 1445011793, Session.getsUser().getId()));
         vehicles.add(new Vehicle("Mazda", "CX-5", 2015, 1445011793, Session.getsUser().getId()));
-
 
         RVAdapter adapter = new RVAdapter(vehicles);
         rv.setAdapter(adapter);
