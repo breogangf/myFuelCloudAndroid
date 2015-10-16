@@ -22,7 +22,6 @@
 
         <EditText
             android:id="@+id/dialog_brand"
-            android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -33,7 +32,6 @@
             android:hint="@string/brand" />
         <EditText
             android:id="@+id/dialog_model"
-            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -45,7 +43,6 @@
 
         <EditText
             android:id="@+id/dialog_year"
-            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -53,6 +50,8 @@
             android:layout_marginRight="4dp"
             android:layout_marginBottom="16dp"
             android:fontFamily="sans-serif"
+            android:inputType="number"
+            android:maxLength="4"
             android:hint="@string/year"/>
 
     </android.support.v7.widget.LinearLayoutCompat>

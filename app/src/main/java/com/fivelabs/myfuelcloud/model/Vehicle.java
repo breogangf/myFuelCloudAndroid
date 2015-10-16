@@ -8,10 +8,10 @@ public class Vehicle {
     String brand;
     String model;
     int year;
-    int created_at;
+    String created_at;
     String userId;
 
-    public Vehicle(String brand, String model, int year, int created_at, String userId) {
+    public Vehicle(String brand, String model, int year, String created_at, String userId) {
         this.brand = brand;
         this.model = model;
         this.year = year;
@@ -43,11 +43,11 @@ public class Vehicle {
         this.year = year;
     }
 
-    public int getCreated_at() {
+    public String getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(int created_at) {
+    public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
 
@@ -59,40 +59,5 @@ public class Vehicle {
         this.userId = userId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Vehicle vehicle = (Vehicle) o;
-
-        if (year != vehicle.year) return false;
-        if (created_at != vehicle.created_at) return false;
-        if (brand != null ? !brand.equals(vehicle.brand) : vehicle.brand != null) return false;
-        if (model != null ? !model.equals(vehicle.model) : vehicle.model != null) return false;
-        return !(userId != null ? !userId.equals(vehicle.userId) : vehicle.userId != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = brand != null ? brand.hashCode() : 0;
-        result = 31 * result + (model != null ? model.hashCode() : 0);
-        result = 31 * result + year;
-        result = 31 * result + created_at;
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Vehicle{" +
-                "brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                ", year=" + year +
-                ", created_at=" + created_at +
-                ", userId='" + userId + '\'' +
-                '}';
-    }
 
 }

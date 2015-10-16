@@ -6,21 +6,32 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
+import com.fivelabs.myfuelcloud.api.vehicle;
 import com.fivelabs.myfuelcloud.helpers.RVAdapter;
 import com.fivelabs.myfuelcloud.model.Vehicle;
+import com.fivelabs.myfuelcloud.util.Common;
+import com.fivelabs.myfuelcloud.util.Global;
 import com.fivelabs.myfuelcloud.util.Session;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -73,6 +84,38 @@ public class VehicleListFragment extends Fragment {
         }
     }
 
+    private void addVehicleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.dialog_add_vehicle, null));
+        builder.setPositiveButton(getActivity().getString(R.string.add), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                EditText editTextBrand = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_brand);
+                EditText editTextModel = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_model);
+                EditText editTextYear = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_year);
+
+                String brand = editTextBrand.getText().toString();
+                String model = editTextModel.getText().toString();
+                String year = editTextYear.getText().toString();
+
+                if (brand.matches("") || model.matches("") || year.matches("")) {
+
+                } else {
+                    addVehicle(brand, model, Integer.parseInt(year));
+                }
+            }
+        });
+
+        builder.setNegativeButton(getActivity().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+
+        builder.create();
+        builder.show();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,26 +127,7 @@ public class VehicleListFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.dialog_add_vehicle, null));
-                builder.setPositiveButton(getActivity().getString(R.string.add), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        Snackbar.make(myInflatedView, "Your vehicle was added to your space", Snackbar.LENGTH_SHORT)
-                                .setAction(null, null).show();
-
-                    }
-                });
-                builder.setNegativeButton(getActivity().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-
-                builder.create();
-                builder.show();
-
+                addVehicleDialog();
             }
         });
 
@@ -119,13 +143,49 @@ public class VehicleListFragment extends Fragment {
         vehicles = new ArrayList<>();
 
         //TODO add here actual vehicles for the user
-        vehicles.add(new Vehicle("Audi", "A3 SportBack", 2009, 1445011793, Session.getsUser().getId()));
-        vehicles.add(new Vehicle("Mazda", "CX-5", 2015, 1445011793, Session.getsUser().getId()));
+        vehicles.add(new Vehicle("Audi", "A3 SportBack", 2009, "1445011793", Session.getsUser().getId()));
+        vehicles.add(new Vehicle("Mazda", "CX-5", 2015, "1445011793", Session.getsUser().getId()));
 
         RVAdapter adapter = new RVAdapter(vehicles);
         rv.setAdapter(adapter);
 
         return myInflatedView;
+    }
+
+    private void addVehicle(String brand, String model, int year) {
+        int timestamp = Common.getCurrentTimestamp();
+
+        RestAdapter restAdapter = (new RestAdapter.Builder())
+                .setEndpoint(Global.API)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", Session.getsUser().getToken());
+                    }
+                })
+                .setLog(new RestAdapter.Log() {
+                    @Override
+                    public void log(String msg) {
+                        Log.i("RETROFIT", msg);
+                    }
+                }).build();
+
+        vehicle vehicle = restAdapter.create(vehicle.class);
+
+        vehicle.addVehicle(brand, model, year, timestamp, Session.getsUser().getId(), new Callback<Vehicle>() {
+
+            @Override
+            public void success(Vehicle vehicle, Response response) {
+                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_added, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.getCause();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_added, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
