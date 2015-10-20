@@ -31,7 +31,6 @@ import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
 import com.fivelabs.myfuelcloud.api.email;
-import com.fivelabs.myfuelcloud.api.register;
 import com.fivelabs.myfuelcloud.api.user;
 import com.fivelabs.myfuelcloud.model.User;
 import com.fivelabs.myfuelcloud.util.Common;
@@ -279,9 +278,9 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                     }
                 }).build();
 
-        register register = restAdapter.create(register.class);
+        user user = restAdapter.create(user.class);
 
-        register.register(username, email, password, timestamp, new Callback<User>() {
+        user.register(username, email, password, timestamp, new Callback<User>() {
 
             @Override
             public void success(User user, Response response) {

@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
-import com.fivelabs.myfuelcloud.api.login;
 import com.fivelabs.myfuelcloud.api.user;
 import com.fivelabs.myfuelcloud.model.User;
 import com.fivelabs.myfuelcloud.util.Common;
@@ -244,9 +243,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }).build();
 
-        login login = restAdapter.create(login.class);
+        user user = restAdapter.create(user.class);
 
-        login.login(new Callback<List<User>>() {
+        user.login(new Callback<List<User>>() {
             @Override
             public void success(List<User> users, Response response) {
                 getUser(mUsernameView.getText().toString());

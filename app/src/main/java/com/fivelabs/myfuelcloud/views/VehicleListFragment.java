@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
 import com.fivelabs.myfuelcloud.api.vehicle;
-import com.fivelabs.myfuelcloud.api.vehicles;
 import com.fivelabs.myfuelcloud.helpers.ItemClickSupport;
 import com.fivelabs.myfuelcloud.helpers.RVAdapter;
 import com.fivelabs.myfuelcloud.model.Vehicle;
@@ -268,9 +267,9 @@ public class VehicleListFragment extends Fragment {
                     }
                 }).build();
 
-        vehicles vehicles = restAdapter.create(vehicles.class);
+        vehicle vehicle = restAdapter.create(vehicle.class);
 
-        vehicles.getVehicles(new Callback<List<Vehicle>>() {
+        vehicle.getVehicles(new Callback<List<Vehicle>>() {
             @Override
             public void success(List<Vehicle> vehicles, Response response) {
                 Session.setsVehicles(vehicles);
