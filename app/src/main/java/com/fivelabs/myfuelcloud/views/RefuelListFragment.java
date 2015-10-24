@@ -140,13 +140,42 @@ public class RefuelListFragment extends Fragment {
     }
 
     private void modifyRefuelDialog(int position) {
+
+        final Vehicle[] vehicle = new Vehicle[1];
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        final View dialogViewEdit = LayoutInflater.from(this.getActivity()).inflate(R.layout.modify_refuel, null, true);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View dialogViewEdit = inflater.inflate(R.layout.modify_refuel, null);
         builder.setView(dialogViewEdit);
 
-        //TODO setup spinnerVehicle
-        spinnerVehicle = (Spinner) dialogViewEdit.findViewById(R.id.dialog_vehicle);
+        if (Session.getsVehicles() != null && Session.getsVehicles().size() > 0) {
+            adapter = new SpinnerAdapter(getActivity(),
+                    android.R.layout.simple_spinner_item,
+                    Session.getsVehicles());
+
+            spinnerVehicle = (Spinner) dialogViewEdit.findViewById(R.id.dialog_vehicle);
+            spinnerVehicle.setAdapter(adapter);
+
+            spinnerVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view,
+                                           int position, long id) {
+
+                    vehicle[0] = adapter.getItem(position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapter) {
+
+                }
+            });
+
+        } else {
+
+            Toast.makeText(getActivity().getApplicationContext(), R.string.add_vehicle_first, Toast.LENGTH_SHORT).show();
+        }
 
         final EditText editTextDate = (EditText) dialogViewEdit.findViewById(R.id.dialog_date);
         final EditText editTextGasPrice = (EditText) dialogViewEdit.findViewById(R.id.dialog_gas_price);
@@ -181,7 +210,7 @@ public class RefuelListFragment extends Fragment {
                 final Double fuelAmount = Double.valueOf(editTextFuelAmount.getText().toString());
                 final Double previousDistance = Double.valueOf(editTextPreviousDistance.getText().toString());
 
-                updateRefuel(id, Double.valueOf(date), gasPrice, gasStation, priceAmount, fuelAmount, previousDistance, "VEHICLEID HERE");
+                updateRefuel(id, Double.valueOf(date), gasPrice, gasStation, priceAmount, fuelAmount, previousDistance, vehicle[0].get_id());
             }
         });
 
