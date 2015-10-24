@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by breogangf on 16/10/15.
  */
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.VehicleViewHolder>{
+public class RVAdapterVehicles extends RecyclerView.Adapter<RVAdapterVehicles.VehicleViewHolder>{
 
     List<Vehicle> vehicles;
 
-    public RVAdapter(List<Vehicle> vehicles){
+    public RVAdapterVehicles(List<Vehicle> vehicles){
         this.vehicles = vehicles;
     }
 

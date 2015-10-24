@@ -1,5 +1,6 @@
 package com.fivelabs.myfuelcloud.util;
 
+import com.fivelabs.myfuelcloud.model.Refuel;
 import com.fivelabs.myfuelcloud.model.User;
 import com.fivelabs.myfuelcloud.model.Vehicle;
 
@@ -12,6 +13,7 @@ public class Session {
 
     public static User sUser;
     public static List<Vehicle> sVehicles;
+    public static List<Refuel> sRefuels;
 
     public static User getsUser() {
         return sUser;
@@ -27,5 +29,13 @@ public class Session {
 
     public static void setsVehicles(List<Vehicle> sVehicles) {
         Session.sVehicles = sVehicles;
+    }
+
+    public static List<Refuel> getsRefuels() {
+        return sRefuels;
+    }
+
+    public static void setsRefuels(List<Refuel> sRefuels) {
+        Session.sRefuels = sRefuels;
     }
 }

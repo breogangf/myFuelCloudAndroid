@@ -266,7 +266,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     public void register(final String username, final String email, final String password){
 
-        int timestamp = Common.getCurrentTimestamp();
+        Long timestamp = Common.getCurrentTimestamp();
 
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)

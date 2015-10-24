@@ -18,13 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
-import com.fivelabs.myfuelcloud.api.vehicle;
+import com.fivelabs.myfuelcloud.api.refuel;
 import com.fivelabs.myfuelcloud.helpers.ItemClickSupport;
-import com.fivelabs.myfuelcloud.helpers.RVAdapterVehicles;
-import com.fivelabs.myfuelcloud.model.Vehicle;
+import com.fivelabs.myfuelcloud.helpers.RVAdapterRefuels;
+import com.fivelabs.myfuelcloud.model.Refuel;
 import com.fivelabs.myfuelcloud.util.Common;
 import com.fivelabs.myfuelcloud.util.Global;
 import com.fivelabs.myfuelcloud.util.Session;
@@ -40,12 +41,12 @@ import retrofit.client.Response;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link VehicleListFragment.OnFragmentInteractionListener} interface
+ * {@link RefuelListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link VehicleListFragment#newInstance} factory method to
+ * Use the {@link RefuelListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class VehicleListFragment extends Fragment {
+public class RefuelListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,7 +64,7 @@ public class VehicleListFragment extends Fragment {
     private View myInflatedView;
     private RecyclerView rv;
 
-    public VehicleListFragment() {
+    public RefuelListFragment() {
         // Required empty public constructor
     }
 
@@ -73,11 +74,11 @@ public class VehicleListFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment VehicleListFragment.
+     * @return A new instance of fragment RefuelListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static VehicleListFragment newInstance(String param1, String param2) {
-        VehicleListFragment fragment = new VehicleListFragment();
+    public static RefuelListFragment newInstance(String param1, String param2) {
+        RefuelListFragment fragment = new RefuelListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -131,41 +132,56 @@ public class VehicleListFragment extends Fragment {
 
     }
 
-    private void modifyVehicleDialog(int position) {
+    private void modifyRefuelDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        final View dialogViewEdit = LayoutInflater.from(this.getActivity()).inflate(R.layout.modify_vehicle,null,true);
+        final View dialogViewEdit = LayoutInflater.from(this.getActivity()).inflate(R.layout.modify_refuel,null,true);
         builder.setView(dialogViewEdit);
 
-        final EditText editTextBrand = (EditText) dialogViewEdit.findViewById(R.id.dialog_brand);
-        final EditText editTextModel = (EditText) dialogViewEdit.findViewById(R.id.dialog_model);
-        final EditText editTextYear = (EditText) dialogViewEdit.findViewById(R.id.dialog_year);
+        //TODO setup spinnerVehicle
+        final Spinner spinnerVehicle = (Spinner) dialogViewEdit.findViewById(R.id.dialog_vehicle);
 
-        String brand = Session.getsVehicles().get(position).getBrand();
-        final String model = Session.getsVehicles().get(position).getModel();
-        final String year = String.valueOf(Session.getsVehicles().get(position).getYear());
-        final String id = Session.getsVehicles().get(position).get_id();
+        final EditText editTextDate = (EditText) dialogViewEdit.findViewById(R.id.dialog_date);
+        final EditText editTextGasPrice = (EditText) dialogViewEdit.findViewById(R.id.dialog_gas_price);
+        final EditText editTextGasStation = (EditText) dialogViewEdit.findViewById(R.id.dialog_gas_station);
+        final EditText editTextPriceAmount = (EditText) dialogViewEdit.findViewById(R.id.dialog_price_amount);
+        final EditText editTextFuelAmount = (EditText) dialogViewEdit.findViewById(R.id.dialog_fuel_amount);
+        final EditText editTextPreviousDistance = (EditText) dialogViewEdit.findViewById(R.id.dialog_previous_distance);
 
-        editTextBrand.setText(brand);
-        editTextModel.setText(model);
-        editTextYear.setText(year);
+        final String date = Session.getsRefuels().get(position).getDate();
+        final Double gasPrice = Session.getsRefuels().get(position).getGas_price();
+        final String gasStation = Session.getsRefuels().get(position).getGas_station();
+        final Double priceAmount = Session.getsRefuels().get(position).getPrice_amount();
+        final Double fuelAmount = Session.getsRefuels().get(position).getFuel_amount();
+        final Double previousDistance = Session.getsRefuels().get(position).getPrevious_distance();
+        final String id = Session.getsRefuels().get(position).get_id();
+
+        editTextDate.setText(date);
+        editTextGasPrice.setText(gasPrice.toString());
+        editTextGasStation.setText(gasStation);
+        editTextPriceAmount.setText(priceAmount.toString());
+        editTextFuelAmount.setText(fuelAmount.toString());
+        editTextPreviousDistance.setText(previousDistance.toString());
 
         builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                String brand = editTextBrand.getText().toString();
-                String model = editTextModel.getText().toString();
-                int year = Integer.parseInt(editTextYear.getText().toString());
+                final String date = editTextDate.getText().toString();
+                final Double gasPrice = Double.valueOf(editTextGasPrice.getText().toString());
+                final String gasStation = editTextGasStation.getText().toString();
+                final Double priceAmount = Double.valueOf(editTextPriceAmount.getText().toString());
+                final Double fuelAmount = Double.valueOf(editTextFuelAmount.getText().toString());
+                final Double previousDistance = Double.valueOf(editTextPreviousDistance.getText().toString());
 
-                updateVehicle(id, brand, model, year);
+                updateRefuel(id, Double.valueOf(date), gasPrice, gasStation, priceAmount, fuelAmount, previousDistance, "VEHICLEID HERE");
             }
         });
 
         builder.setNeutralButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                deleteVehicle(id);
+                deleteRefuel(id);
             }
         });
 
@@ -173,25 +189,38 @@ public class VehicleListFragment extends Fragment {
         builder.show();
     }
 
-    private void addVehicleDialog() {
+    private void addRefuelDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.dialog_add_vehicle, null));
+        builder.setView(inflater.inflate(R.layout.dialog_add_refuel, null));
         builder.setPositiveButton(getActivity().getString(R.string.add), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-                EditText editTextBrand = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_brand);
-                EditText editTextModel = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_model);
-                EditText editTextYear = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_year);
+                Spinner vehicle = (Spinner) ((AlertDialog) dialog).findViewById(R.id.dialog_vehicle);
 
-                String brand = editTextBrand.getText().toString();
-                String model = editTextModel.getText().toString();
-                String year = editTextYear.getText().toString();
+                EditText editTextGasPrice = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_gas_price);
+                EditText editTextGasStation = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_gas_station);
+                EditText editTextPriceAmount = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_price_amount);
+                EditText editTextFuelAmount = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_fuel_amount);
+                EditText editTextPreviousDistance = (EditText) ((AlertDialog) dialog).findViewById(R.id.dialog_previous_distance);
 
-                if (brand.matches("") || model.matches("") || year.matches("")) {
+                String gasPrice = editTextGasPrice.getText().toString();
+                String gasStation = editTextGasStation.getText().toString();
+                String priceAmount = editTextPriceAmount.getText().toString();
+                String fuelAmount = editTextFuelAmount.getText().toString();
+                String previousDistance = editTextPreviousDistance.getText().toString();
+
+                if (gasPrice.matches("") || gasStation.matches("") || priceAmount.matches("") || fuelAmount.matches("") || previousDistance.matches("")){
 
                 } else {
-                    addVehicle(brand, model, Integer.parseInt(year));
+
+                    //TODO add real vehicle id from spinner
+                    addRefuel(Common.getCurrentTimestamp(),
+                            Double.valueOf(gasPrice), gasStation,
+                            Double.valueOf(priceAmount),
+                            Double.valueOf(fuelAmount),
+                            Double.valueOf(previousDistance),
+                            "562b88ef2ed5ae500a544bbe");
                 }
             }
         });
@@ -209,10 +238,10 @@ public class VehicleListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        myInflatedView = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+        myInflatedView = inflater.inflate(R.layout.fragment_refuel_list, container, false);
 
         mRecyclerView = myInflatedView.findViewById(R.id.rv);
-        mProgressView = myInflatedView.findViewById(R.id.login_vehicles_progress);
+        mProgressView = myInflatedView.findViewById(R.id.login_refuels_progress);
 
         rv = (RecyclerView) myInflatedView.findViewById(R.id.rv);
 
@@ -220,7 +249,7 @@ public class VehicleListFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
-                modifyVehicleDialog(position);
+                modifyRefuelDialog(position);
 
             }
         }).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
@@ -237,17 +266,17 @@ public class VehicleListFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-                addVehicleDialog();
+                addRefuelDialog();
             }
         });
 
-        loadVehicles();
+        loadRefuels();
 
         return myInflatedView;
     }
 
 
-    private void loadVehicles(){
+    private void loadRefuels(){
 
         showProgress(true);
 
@@ -267,20 +296,19 @@ public class VehicleListFragment extends Fragment {
                     }
                 }).build();
 
-        vehicle vehicle = restAdapter.create(vehicle.class);
+        refuel refuel = restAdapter.create(refuel.class);
 
-        vehicle.getVehicles(new Callback<List<Vehicle>>() {
+        refuel.getRefuels(new Callback<List<Refuel>>() {
             @Override
-            public void success(List<Vehicle> vehicles, Response response) {
-                Session.setsVehicles(vehicles);
-
+            public void success(List<Refuel> refuels, Response response) {
+                Session.setsRefuels(refuels);
 
                 rv.setHasFixedSize(true);
 
                 LinearLayoutManager llm = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(llm);
 
-                RVAdapterVehicles adapter = new RVAdapterVehicles(Session.getsVehicles());
+                RVAdapterRefuels adapter = new RVAdapterRefuels(Session.getsRefuels());
                 rv.setAdapter(adapter);
 
                 showProgress(false);
@@ -290,13 +318,11 @@ public class VehicleListFragment extends Fragment {
             public void failure(RetrofitError error) {
                 error.getCause();
                 showProgress(false);
-
             }
         });
     }
 
-    private void addVehicle(String brand, String model, int year) {
-        Long timestamp = Common.getCurrentTimestamp();
+    private void addRefuel(Long date, Double gas_price, String gas_station, Double price_amount, Double fuel_amount, Double previous_distance, String vehicle) {
 
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
@@ -314,25 +340,25 @@ public class VehicleListFragment extends Fragment {
                     }
                 }).build();
 
-        vehicle vehicle = restAdapter.create(vehicle.class);
+        refuel refuel = restAdapter.create(refuel.class);
 
-        vehicle.addVehicle(brand, model, year, timestamp, Session.getsUser().getId(), new Callback<Vehicle>() {
+        refuel.addRefuel(date, gas_price, gas_station, price_amount, fuel_amount, previous_distance, vehicle, new Callback<Refuel>() {
 
             @Override
-            public void success(Vehicle vehicle, Response response) {
-                loadVehicles();
-                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_added, Toast.LENGTH_LONG).show();
+            public void success(Refuel refuel, Response response) {
+                loadRefuels();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.refuel_added, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void failure(RetrofitError error) {
                 error.getCause();
-                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_added, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.refuel_not_added, Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void deleteVehicle(String id){
+    private void deleteRefuel(String id){
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
@@ -349,25 +375,24 @@ public class VehicleListFragment extends Fragment {
                     }
                 }).build();
 
-        vehicle vehicle = restAdapter.create(vehicle.class);
+        refuel refuel = restAdapter.create(refuel.class);
 
-        vehicle.deleteVehicle(id, new Callback<Response>() {
+        refuel.deleteRefuel(id, new Callback<Response>() {
             @Override
             public void success(Response response, Response response2) {
-                loadVehicles();
-                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_deleted, Toast.LENGTH_LONG).show();
+                loadRefuels();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.refuel_deleted, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void failure(RetrofitError error) {
                 error.getCause();
-                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_deleted, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.refuel_not_deleted, Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void updateVehicle(String id, String brand, String model, int year) {
-        Long timestamp = Common.getCurrentTimestamp();
+    private void updateRefuel(String id, Double date, Double gas_price, String gas_station, Double price_amount, Double fuel_amount, Double previous_distance, String vehicle) {
 
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
@@ -385,20 +410,20 @@ public class VehicleListFragment extends Fragment {
                     }
                 }).build();
 
-        vehicle vehicle = restAdapter.create(vehicle.class);
+        refuel refuel = restAdapter.create(refuel.class);
 
-        vehicle.updateVehicle(id, brand, model, year, timestamp, Session.getsUser().getId(), new Callback<Vehicle>() {
+        refuel.updateRefuel(id, date, gas_price, gas_station, price_amount, fuel_amount, previous_distance, Session.getsUser().getId(), vehicle, new Callback<Refuel>() {
 
             @Override
-            public void success(Vehicle vehicle, Response response) {
-                loadVehicles();
-                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_updated, Toast.LENGTH_LONG).show();
+            public void success(Refuel refuel, Response response) {
+                loadRefuels();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.refuel_updated, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void failure(RetrofitError error) {
                 error.getCause();
-                Toast.makeText(getActivity().getApplicationContext(), R.string.vehicle_not_updated, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), R.string.refuel_not_updated, Toast.LENGTH_LONG).show();
             }
         });
     }
