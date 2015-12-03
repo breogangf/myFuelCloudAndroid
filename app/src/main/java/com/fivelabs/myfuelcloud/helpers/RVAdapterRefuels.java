@@ -52,7 +52,7 @@ public class RVAdapterRefuels extends RecyclerView.Adapter<RVAdapterRefuels.Refu
 
     @Override
     public void onBindViewHolder(RefuelViewHolder holder, int position) {
-        holder.date.setText(Common.formatDateTime(refuels.get(position).getDate()));
+        holder.date.setText(Common.getDateTimeTextFromTimestamp(refuels.get(position).getDate()));
         holder.vehicle.setText(refuels.get(position).getVehicle().getModel());
         holder.gas_station.setText(String.valueOf(refuels.get(position).getGas_station()));
         holder.price_amount.setText(String.format("%s€", String.valueOf(refuels.get(position).getPrice_amount())));

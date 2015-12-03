@@ -6,7 +6,7 @@ package com.fivelabs.myfuelcloud.model;
 public class Refuel {
 
     String _id;
-    String date;
+    Long date;
     Double gas_price;
     String gas_station;
     Double price_amount;
@@ -15,7 +15,7 @@ public class Refuel {
     String userId;
     Vehicle vehicle;
 
-    public Refuel(String _id, String date, Double gas_price, String gas_station, Double price_amount, Double fuel_amount, Double previous_distance, String userId, Vehicle vehicle) {
+    public Refuel(String _id, Long date, Double gas_price, String gas_station, Double price_amount, Double fuel_amount, Double previous_distance, String userId, Vehicle vehicle) {
         this._id = _id;
         this.date = date;
         this.gas_price = gas_price;
@@ -35,11 +35,11 @@ public class Refuel {
         this._id = _id;
     }
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
@@ -141,7 +141,7 @@ public class Refuel {
     public String toString() {
         return "Refuel{" +
                 "_id='" + _id + '\'' +
-                ", date='" + date + '\'' +
+                ", date=" + date +
                 ", gas_price=" + gas_price +
                 ", gas_station='" + gas_station + '\'' +
                 ", price_amount=" + price_amount +

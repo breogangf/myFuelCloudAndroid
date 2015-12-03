@@ -18,8 +18,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
@@ -34,6 +38,8 @@ import com.fivelabs.myfuelcloud.util.Common;
 import com.fivelabs.myfuelcloud.util.Global;
 import com.fivelabs.myfuelcloud.util.Session;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import retrofit.Callback;
@@ -70,6 +76,8 @@ public class RefuelListFragment extends Fragment {
 
     private Spinner spinnerVehicle;
     private SpinnerAdapter adapter;
+
+    Long time;
 
     public RefuelListFragment() {
         // Required empty public constructor
@@ -184,7 +192,7 @@ public class RefuelListFragment extends Fragment {
         final EditText editTextFuelAmount = (EditText) dialogViewEdit.findViewById(R.id.dialog_fuel_amount);
         final EditText editTextPreviousDistance = (EditText) dialogViewEdit.findViewById(R.id.dialog_previous_distance);
 
-        final String date = Session.getsRefuels().get(position).getDate();
+        final String date = Common.getDateTimeTextFromTimestamp(Session.getsRefuels().get(position).getDate());
         final Double gasPrice = Session.getsRefuels().get(position).getGas_price();
         final String gasStation = Session.getsRefuels().get(position).getGas_station();
         final Double priceAmount = Session.getsRefuels().get(position).getPrice_amount();
@@ -229,11 +237,47 @@ public class RefuelListFragment extends Fragment {
 
         final Vehicle[] vehicle = new Vehicle[1];
 
+        time = Common.getCurrentTimestamp();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View addRefuelView = inflater.inflate(R.layout.dialog_add_refuel, null);
         builder.setView(addRefuelView);
+
+        final TextView dateTime = (TextView) addRefuelView.findViewById(R.id.textViewDateTime);
+        dateTime.setText(Common.getDateTimeTextFromTimestamp(time));
+
+        Button change = (Button) addRefuelView.findViewById(R.id.buttonDateTimePicker);
+        change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View dialogView = View.inflate(getActivity(), R.layout.date_time_picker, null);
+                final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+
+                dialogView.findViewById(R.id.date_time_set).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        DatePicker datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+                        TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time_picker);
+
+                        Calendar calendar = new GregorianCalendar(datePicker.getYear(),
+                                datePicker.getMonth(),
+                                datePicker.getDayOfMonth(),
+                                timePicker.getCurrentHour(),
+                                timePicker.getCurrentMinute());
+
+                        time = (calendar.getTimeInMillis());
+
+                        dateTime.setText(Common.getDateTimeTextFromTimestamp(time));
+
+                        alertDialog.dismiss();
+                    }});
+                alertDialog.setView(dialogView);
+                alertDialog.show();
+            }
+        });
 
         if (Session.getsVehicles() != null && Session.getsVehicles().size() > 0) {
             adapter = new SpinnerAdapter(getActivity(),
@@ -281,7 +325,7 @@ public class RefuelListFragment extends Fragment {
 
                 } else {
 
-                    addRefuel(Common.getCurrentTimestamp(),
+                    addRefuel(time,
                             Double.valueOf(gasPrice), gasStation,
                             Double.valueOf(priceAmount),
                             Double.valueOf(fuelAmount),
