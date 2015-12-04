@@ -1,109 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-        android:gravity="center"
-        android:text="@string/refuel"
-        android:textStyle="bold"
-        android:textColor="@color/cardview_light_background"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:scaleType="center"
         android:background="#3F51B5"
-        android:contentDescription="@string/app_name" />
+        android:contentDescription="@string/app_name"
+        android:gravity="center"
+        android:scaleType="center"
+        android:text="@string/refuel"
+        android:textColor="@color/cardview_light_background"
+        android:textStyle="bold" />
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16sp">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/dialog_vehicle"
+        <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16sp">
 
-        </android.support.v7.widget.AppCompatSpinner>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/dialog_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:hint="@string/date"
-            android:inputType="datetime" />
-        <EditText
-            android:id="@+id/dialog_gas_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:inputType="numberDecimal"
-            android:hint="@string/gas_price"/>
+                <TextView
+                    android:id="@+id/textViewDateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15/11/2015 13:31"
+                    android:padding="10dp"/>
 
-        <EditText
-            android:id="@+id/dialog_gas_station"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:inputType="text"
-            android:hint="@string/gas_station"/>
+                <Button
+                    android:id="@+id/buttonDateTimePicker"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="change"/>
 
-        <EditText
-            android:id="@+id/dialog_price_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:inputType="numberDecimal"
-            android:hint="@string/price_amount"/>
+            </LinearLayout>
 
-        <EditText
-            android:id="@+id/dialog_fuel_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:inputType="numberDecimal"
-            android:hint="@string/fuel_amount"/>
+            <Spinner
+                android:id="@+id/dialog_vehicle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"/>
+
+            <EditText
+                android:id="@+id/dialog_gas_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:hint="@string/gas_price"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/dialog_gas_station"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:hint="@string/gas_station"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/dialog_price_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:hint="@string/price_amount"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/dialog_fuel_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:hint="@string/fuel_amount"
+                android:inputType="numberDecimal" />
 
 
-        <EditText
-            android:id="@+id/dialog_previous_distance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:inputType="numberDecimal"
-            android:hint="@string/previous_distance"/>
+            <EditText
+                android:id="@+id/dialog_previous_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:hint="@string/previous_distance"
+                android:inputType="numberDecimal" />
 
-    </android.support.v7.widget.LinearLayoutCompat>
+        </android.support.v7.widget.LinearLayoutCompat>
+
+
+    </ScrollView>
 
 
 </LinearLayout>

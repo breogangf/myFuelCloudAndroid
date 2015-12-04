@@ -150,6 +150,7 @@ public class RefuelListFragment extends Fragment {
     private void modifyRefuelDialog(int position) {
 
         final Vehicle[] vehicle = new Vehicle[1];
+        time = Session.getsRefuels().get(position).getDate();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -185,14 +186,14 @@ public class RefuelListFragment extends Fragment {
             Toast.makeText(getActivity().getApplicationContext(), R.string.add_vehicle_first, Toast.LENGTH_SHORT).show();
         }
 
-        final EditText editTextDate = (EditText) dialogViewEdit.findViewById(R.id.dialog_date);
+        final TextView textViewDateTime = (TextView) dialogViewEdit.findViewById(R.id.textViewDateTime);
         final EditText editTextGasPrice = (EditText) dialogViewEdit.findViewById(R.id.dialog_gas_price);
         final EditText editTextGasStation = (EditText) dialogViewEdit.findViewById(R.id.dialog_gas_station);
         final EditText editTextPriceAmount = (EditText) dialogViewEdit.findViewById(R.id.dialog_price_amount);
         final EditText editTextFuelAmount = (EditText) dialogViewEdit.findViewById(R.id.dialog_fuel_amount);
         final EditText editTextPreviousDistance = (EditText) dialogViewEdit.findViewById(R.id.dialog_previous_distance);
 
-        final String date = Common.getDateTimeTextFromTimestamp(Session.getsRefuels().get(position).getDate());
+        final String date = Common.getDateTimeTextFromTimestamp(time);
         final Double gasPrice = Session.getsRefuels().get(position).getGas_price();
         final String gasStation = Session.getsRefuels().get(position).getGas_station();
         final Double priceAmount = Session.getsRefuels().get(position).getPrice_amount();
@@ -200,25 +201,55 @@ public class RefuelListFragment extends Fragment {
         final Double previousDistance = Session.getsRefuels().get(position).getPrevious_distance();
         final String id = Session.getsRefuels().get(position).get_id();
 
-        editTextDate.setText(date);
+        textViewDateTime.setText(date);
         editTextGasPrice.setText(gasPrice.toString());
         editTextGasStation.setText(gasStation);
         editTextPriceAmount.setText(priceAmount.toString());
         editTextFuelAmount.setText(fuelAmount.toString());
         editTextPreviousDistance.setText(previousDistance.toString());
 
+        Button change = (Button) dialogViewEdit.findViewById(R.id.buttonDateTimePicker);
+        change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View dialogView = View.inflate(getActivity(), R.layout.date_time_picker, null);
+                final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+
+                dialogView.findViewById(R.id.date_time_set).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        DatePicker datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+                        TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time_picker);
+
+                        Calendar calendar = new GregorianCalendar(datePicker.getYear(),
+                                datePicker.getMonth(),
+                                datePicker.getDayOfMonth(),
+                                timePicker.getCurrentHour(),
+                                timePicker.getCurrentMinute());
+
+                        time = (calendar.getTimeInMillis());
+
+                        textViewDateTime.setText(Common.getDateTimeTextFromTimestamp(time));
+
+                        alertDialog.dismiss();
+                    }});
+                alertDialog.setView(dialogView);
+                alertDialog.show();
+            }
+        });
+
         builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                final String date = editTextDate.getText().toString();
                 final Double gasPrice = Double.valueOf(editTextGasPrice.getText().toString());
                 final String gasStation = editTextGasStation.getText().toString();
                 final Double priceAmount = Double.valueOf(editTextPriceAmount.getText().toString());
                 final Double fuelAmount = Double.valueOf(editTextFuelAmount.getText().toString());
                 final Double previousDistance = Double.valueOf(editTextPreviousDistance.getText().toString());
 
-                updateRefuel(id, Double.valueOf(date), gasPrice, gasStation, priceAmount, fuelAmount, previousDistance, vehicle[0].get_id());
+                updateRefuel(id, time, gasPrice, gasStation, priceAmount, fuelAmount, previousDistance, vehicle[0].get_id());
             }
         });
 
@@ -541,7 +572,7 @@ public class RefuelListFragment extends Fragment {
         });
     }
 
-    private void updateRefuel(String id, Double date, Double gas_price, String gas_station, Double price_amount, Double fuel_amount, Double previous_distance, String vehicle) {
+    private void updateRefuel(String id, Long date, Double gas_price, String gas_station, Double price_amount, Double fuel_amount, Double previous_distance, String vehicle) {
 
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
