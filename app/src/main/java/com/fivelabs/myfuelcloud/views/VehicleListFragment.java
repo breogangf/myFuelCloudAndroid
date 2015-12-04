@@ -22,9 +22,8 @@ import android.widget.Toast;
 
 import com.fivelabs.myfuelcloud.R;
 import com.fivelabs.myfuelcloud.api.vehicle;
-import com.fivelabs.myfuelcloud.api.vehicles;
 import com.fivelabs.myfuelcloud.helpers.ItemClickSupport;
-import com.fivelabs.myfuelcloud.helpers.RVAdapter;
+import com.fivelabs.myfuelcloud.helpers.RVAdapterVehicles;
 import com.fivelabs.myfuelcloud.model.Vehicle;
 import com.fivelabs.myfuelcloud.util.Common;
 import com.fivelabs.myfuelcloud.util.Global;
@@ -268,9 +267,9 @@ public class VehicleListFragment extends Fragment {
                     }
                 }).build();
 
-        vehicles vehicles = restAdapter.create(vehicles.class);
+        vehicle vehicle = restAdapter.create(vehicle.class);
 
-        vehicles.getVehicles(new Callback<List<Vehicle>>() {
+        vehicle.getVehicles(new Callback<List<Vehicle>>() {
             @Override
             public void success(List<Vehicle> vehicles, Response response) {
                 Session.setsVehicles(vehicles);
@@ -281,7 +280,7 @@ public class VehicleListFragment extends Fragment {
                 LinearLayoutManager llm = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(llm);
 
-                RVAdapter adapter = new RVAdapter(Session.getsVehicles());
+                RVAdapterVehicles adapter = new RVAdapterVehicles(Session.getsVehicles());
                 rv.setAdapter(adapter);
 
                 showProgress(false);
@@ -297,7 +296,7 @@ public class VehicleListFragment extends Fragment {
     }
 
     private void addVehicle(String brand, String model, int year) {
-        int timestamp = Common.getCurrentTimestamp();
+        Long timestamp = Common.getCurrentTimestamp();
 
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
@@ -368,7 +367,7 @@ public class VehicleListFragment extends Fragment {
     }
 
     private void updateVehicle(String id, String brand, String model, int year) {
-        int timestamp = Common.getCurrentTimestamp();
+        Long timestamp = Common.getCurrentTimestamp();
 
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
