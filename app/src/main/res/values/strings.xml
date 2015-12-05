@@ -63,5 +63,12 @@
     <string name="refuel_updated">Refuel updated</string>
     <string name="refuel_not_updated">Refuel not updated</string>
     <string name="add_vehicle_first">Please add a vehicle first</string>
+    <string name="statistics">Statistics</string>
+    <string name="price_amount_average">Price amount average:</string>
+    <string name="fuel_amount_average">Fuel amount average:</string>
+    <string name="fuel_consumption_average">Fuel consumption average:</string>
+    <string name="cost_per_kilometer">Cost per kilometer:</string>
+    <string name="previous_distance_average">Previous distance average:</string>
+    <string name="gas_price_average">Gas price average:</string>
 
 </resources>
