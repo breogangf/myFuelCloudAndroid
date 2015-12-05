@@ -3,7 +3,9 @@ package com.fivelabs.myfuelcloud.views;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -50,6 +52,10 @@ public class LoginActivity extends AppCompatActivity {
     private String username;
     private String password;
 
+    private static final String MY_PREFERENCES = "MyFuelCloudPrefs";
+
+    SharedPreferences sharedpreferences;
+
 
     private final static int REGISTER_CODE = 55;
 
@@ -57,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sharedpreferences = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -104,6 +112,18 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (sharedpreferences.getString("username", null) != null && sharedpreferences.getString("password", null) != null) {
+
+            mUsernameView.setText(sharedpreferences.getString("username", null));
+            mPasswordView.setText(sharedpreferences.getString("password", null));
+            attemptLogin();
+        }
     }
 
     @Override
@@ -222,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void login(final String username, final String password){
+    public void login(final String username, final String password) {
 
         this.username = username;
         this.password = password;
@@ -249,6 +269,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(List<User> users, Response response) {
                 getUser(mUsernameView.getText().toString());
+
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+
+                editor.putString("username", username);
+                editor.putString("password", password);
+                editor.apply();
             }
 
             @Override
@@ -261,7 +287,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void getUser(final String username){
+    public void getUser(final String username) {
         RestAdapter restAdapter = (new RestAdapter.Builder())
                 .setEndpoint(Global.API)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
@@ -293,5 +319,5 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
- }
+}
 
