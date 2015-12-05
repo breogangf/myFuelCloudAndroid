@@ -70,5 +70,9 @@
     <string name="cost_per_kilometer">Cost per kilometer:</string>
     <string name="previous_distance_average">Previous distance average:</string>
     <string name="gas_price_average">Gas price average:</string>
+    <string name="log_out">Logout</string>
+    <string name="log_out_confirmation">Are you sure you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

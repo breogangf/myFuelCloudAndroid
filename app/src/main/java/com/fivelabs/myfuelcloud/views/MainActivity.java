@@ -2,12 +2,16 @@ package com.fivelabs.myfuelcloud.views;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -26,6 +30,8 @@ public class MainActivity extends AppCompatActivity
 
     TextView textViewUserName;
     TextView getTextViewEmail;
+
+    private static final String MY_PREFERENCES = "MyFuelCloudPrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +95,33 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
+    public  void logout(){
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(getString(R.string.log_out))
+                .setMessage(getString(R.string.log_out_confirmation))
+                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences sharedpreferences = getSharedPreferences(MainActivity.MY_PREFERENCES, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.clear();
+                        editor.apply();
+                        Session.sUser = null;
+                        Session.sVehicles = null;
+                        Session.sRefuels = null;
+                        Session.sStatistic = null;
+
+                        MainActivity.this.finish();
+                    }
+
+                })
+                .setNegativeButton(getString(R.string.no), null)
+                .show();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -116,7 +149,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_share:
                 break;
-            case R.id.nav_send:
+            case R.id.nav_logout:
+                logout();
                 break;
 
         }
