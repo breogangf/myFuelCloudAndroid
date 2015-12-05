@@ -19,7 +19,10 @@ import com.fivelabs.myfuelcloud.util.Common;
 import com.fivelabs.myfuelcloud.util.Session;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, VehicleListFragment.OnFragmentInteractionListener, RefuelListFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        VehicleListFragment.OnFragmentInteractionListener,
+        RefuelListFragment.OnFragmentInteractionListener,
+        StatisticsFragment.OnFragmentInteractionListener{
 
     TextView textViewUserName;
     TextView getTextViewEmail;
@@ -108,6 +111,8 @@ public class MainActivity extends AppCompatActivity
                 beginFragmentTransaction(fragment, fragmentManager);
                 break;
             case R.id.nav_statistics:
+                fragment = new StatisticsFragment();
+                beginFragmentTransaction(fragment, fragmentManager);
                 break;
             case R.id.nav_share:
                 break;
